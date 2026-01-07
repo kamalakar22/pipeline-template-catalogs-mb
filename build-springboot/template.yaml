@@ -1,0 +1,42 @@
+type: pipeline-template
+version: 1
+
+name: Spring Boot Multibranch Pipeline (Maven Only)
+description: Multibranch pipeline with feature, PR, and main builds
+templateType: MULTIBRANCH
+
+parameters:
+  - name: repoUrl
+    type: string
+    displayName: Repository URL
+
+  - name: gitCredentials
+    type: credentials
+    displayName: Git Credentials
+
+multibranch:
+  branchSource:
+    git:
+      remote: ${repoUrl}
+      credentialsId: ${gitCredentials}
+      traits:
+        - gitBranchDiscovery
+
+        # Enable PR builds (same repo)
+        - gitHubPullRequestDiscovery:
+            strategyId: 1
+
+        - $class: 'CleanBeforeCheckoutTrait'
+        - $class: 'CleanAfterCheckoutTrait'
+        - $class: 'LocalBranchTrait'
+
+        - headWildcardFilter:
+            includes: |
+              main
+              feature-*
+              fix-*
+              PR-*
+
+  orphanedItemStrategy:
+    numToKeep: 10
+

@@ -1,7 +1,9 @@
 type: pipeline-template-catalog
 version: 1
 
-name: Spring Boot CI Catalog
+
+name: devops-ci-catalog-mb
+displayName: DevOps CI  MB Pipeline Catalog
 description: Pipeline Template Catalog for Spring Boot multibranch testing
 
 templates:

@@ -1,0 +1,11 @@
+type: catalog
+version: 1
+
+name: Spring Boot CI Catalog
+description: Pipeline Template Catalog for Spring Boot multibranch testing
+
+templates:
+  - name: build-springboot
+    description: Multibranch Spring Boot pipeline (Maven build only)
+    path: build-springboot/template.yaml
+

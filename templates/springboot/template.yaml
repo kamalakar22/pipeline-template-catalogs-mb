@@ -2,62 +2,41 @@ type: pipeline-template
 version: 1
 
 name: Spring Boot Multibranch Pipeline (Maven Only)
+displayName: Spring Boot Multibranch Pipeline (Maven Only)
 description: Multibranch pipeline with feature, PR, and main builds
 templateType: MULTIBRANCH
 
-########################################
-# 🔥 REQUIRED: TEMPLATE SELECTORS
-########################################
-selectors:
-  - scm:
-      git:
-        repoUrl: https://github.com/kamalakar22/board_game.git
-        branches:
-          include:
-            - main
-            - feature-.*
-            - fix-.*
-
-########################################
-# PARAMETERS
-########################################
 parameters:
-  - name: repoUrl
-    type: string
-    displayName: Repository URL
-    defaultValue: https://github.com/kamalakar22/board_game.git
-
   - name: gitCredentials
     type: credentials
-    displayName: Git Credentials
+    displayName: GitHub Credentials
 
 ########################################
-# MULTIBRANCH CONFIG
+# ✅ VALID MULTIBRANCH CONFIG
 ########################################
 multibranch:
   branchSource:
-    git:
-      remote: ${repoUrl}
+    github:
+      id: board-game-mb
+      repoOwner: kamalakar22
+      repository: board_game
       credentialsId: ${gitCredentials}
+
       traits:
-        # Branch discovery
-        - gitBranchDiscovery
+        # Discover branches
+        - $class: org.jenkinsci.plugins.github_branch_source.BranchDiscoveryTrait
+          strategyId: 1   # all branches
 
-        # PR discovery (origin only)
-        - changeRequestDiscovery:
-            strategyId: 1
+        # Discover PRs
+        - $class: org.jenkinsci.plugins.github_branch_source.PullRequestDiscoveryTrait
+          strategyId: 1   # PR from origin
 
-        # Cleanup traits
-        - cleanBeforeCheckout
-        - cleanAfterCheckout
-        - localBranch
-
-        # Branch name filter (AFTER selection)
-        - headWildcardFilter:
-            includes: |
-              main
-              feature-.*
-              fix-.*
+        # Filter branch names
+        - $class: jenkins.scm.impl.trait.WildcardSCMHeadFilterTrait
+          includes: |
+            main
+            feature-.*
+            fix-.*
 
   orphanedItemStrategy:
     numToKeep: 10

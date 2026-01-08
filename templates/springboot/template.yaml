@@ -12,11 +12,12 @@ parameters:
     displayName: Git Credentials
 
 multibranch:
+  markerFile: pom.xml   # ✅ MUST be here
+
   branchSource:
     git:
       remote: https://github.com/kamalakar22/board_game.git
       credentialsId: ${gitCredentials}
-
       traits:
         - $class: jenkins.plugins.git.traits.BranchDiscoveryTrait
 
@@ -26,8 +27,6 @@ multibranch:
             feature-.*
             fix-.*
             snyk-.*
-
-  markerFile: pom.xml
 
   orphanedItemStrategy:
     numToKeep: 10

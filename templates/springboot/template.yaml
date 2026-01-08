@@ -3,7 +3,7 @@ version: 1
 
 name: Spring Boot Multibranch Pipeline (Maven Only)
 displayName: Spring Boot Multibranch Pipeline (Maven Only)
-description: Multibranch pipeline with feature, PR, and main builds
+description: Multibranch pipeline with feature and main builds
 templateType: MULTIBRANCH
 
 parameters:
@@ -20,15 +20,11 @@ multibranch:
       credentialsId: ${gitCredentials}
 
       traits:
-        # Discover all branches
+        # Discover branches only (SUPPORTED)
         - $class: org.jenkinsci.plugins.github_branch_source.BranchDiscoveryTrait
           strategyId: 1
 
-        # Discover PRs from same repo
-        - $class: org.jenkinsci.plugins.github_branch_source.PullRequestDiscoveryTrait
-          strategyId: 1
-
-        # Filter branches by name
+        # Filter branch names
         - $class: jenkins.scm.impl.trait.WildcardSCMHeadFilterTrait
           includes: |
             main

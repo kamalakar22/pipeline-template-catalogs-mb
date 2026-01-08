@@ -8,46 +8,25 @@ pipeline {
   }
 
   options {
-    durabilityHint('PERFORMANCE_OPTIMIZED')
     disableConcurrentBuilds()
-    timeout(time: 1, unit: 'HOURS')
-    skipDefaultCheckout(true)
+    timeout(time: 30, unit: 'MINUTES')
+    durabilityHint('PERFORMANCE_OPTIMIZED')
   }
 
   environment {
     MAVEN_REPO = 'maven-repo'
-    MVN_CACHE_NAME = 'mvn-cache'
   }
 
   stages {
 
-    /* ================= CHECKOUT ================= */
     stage('Checkout') {
-      when {
-        not { triggeredBy 'BranchIndexingCause' }
-      }
       steps {
         checkout scm
         sh 'mvn -version'
       }
     }
 
-    /* ================= RESTORE MAVEN CACHE ================= */
-    stage('Restore Maven Cache') {
-      when {
-        not { triggeredBy 'BranchIndexingCause' }
-      }
-      steps {
-        sh "mkdir -p ${MAVEN_REPO}"
-        readCache name: "${MVN_CACHE_NAME}"
-      }
-    }
-
-    /* ================= MAVEN BUILD ================= */
     stage('Maven Build') {
-      when {
-        not { triggeredBy 'BranchIndexingCause' }
-      }
       steps {
         sh """
           mvn clean install \
@@ -56,28 +35,14 @@ pipeline {
         """
       }
     }
-
-    /* ================= SAVE MAVEN CACHE ================= */
-    stage('Save Maven Cache') {
-      when {
-        not { triggeredBy 'BranchIndexingCause' }
-      }
-      steps {
-        writeCache(
-          name: "${MVN_CACHE_NAME}",
-          includes: "${MAVEN_REPO}/**"
-        )
-      }
-    }
   }
 
   post {
     success {
-      echo "Maven build SUCCESS on ${env.BRANCH_NAME}"
+      echo "Maven build SUCCESS on branch ${env.BRANCH_NAME}"
     }
     failure {
-      echo "Maven build FAILED on ${env.BRANCH_NAME}"
+      echo "Maven build FAILED on branch ${env.BRANCH_NAME}"
     }
   }
 }
-

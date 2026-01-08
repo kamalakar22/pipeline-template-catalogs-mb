@@ -9,29 +9,25 @@ templateType: MULTIBRANCH
 parameters:
   - name: gitCredentials
     type: credentials
-    displayName: GitHub Credentials
+    displayName: Git Credentials
 
 multibranch:
   branchSource:
-    github:
-      id: board-game-mb
-      repoOwner: kamalakar22
-      repository: board_game
+    git:
+      remote: https://github.com/kamalakar22/board_game.git
       credentialsId: ${gitCredentials}
 
       traits:
-        # Discover branches
-        - $class: org.jenkinsci.plugins.github_branch_source.BranchDiscoveryTrait
-          strategyId: 1
+        - $class: jenkins.plugins.git.traits.BranchDiscoveryTrait
 
-        # Filter branch names
         - $class: jenkins.scm.impl.trait.WildcardSCMHeadFilterTrait
           includes: |
             main
             feature-.*
             fix-.*
+            snyk-.*
 
-  markerFile: pom.xml   # 🔥 THIS IS THE KEY LINE
+  markerFile: pom.xml
 
   orphanedItemStrategy:
     numToKeep: 10

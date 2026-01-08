@@ -11,9 +11,6 @@ parameters:
     type: credentials
     displayName: GitHub Credentials
 
-########################################
-# ✅ VALID MULTIBRANCH CONFIG
-########################################
 multibranch:
   branchSource:
     github:
@@ -23,15 +20,15 @@ multibranch:
       credentialsId: ${gitCredentials}
 
       traits:
-        # Discover branches
+        # Discover all branches
         - $class: org.jenkinsci.plugins.github_branch_source.BranchDiscoveryTrait
-          strategyId: 1   # all branches
+          strategyId: 1
 
-        # Discover PRs
+        # Discover PRs from same repo
         - $class: org.jenkinsci.plugins.github_branch_source.PullRequestDiscoveryTrait
-          strategyId: 1   # PR from origin
+          strategyId: 1
 
-        # Filter branch names
+        # Filter branches by name
         - $class: jenkins.scm.impl.trait.WildcardSCMHeadFilterTrait
           includes: |
             main

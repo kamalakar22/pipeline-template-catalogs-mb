@@ -20,7 +20,7 @@ multibranch:
       credentialsId: ${gitCredentials}
 
       traits:
-        # Discover branches only (SUPPORTED)
+        # Discover branches
         - $class: org.jenkinsci.plugins.github_branch_source.BranchDiscoveryTrait
           strategyId: 1
 
@@ -30,6 +30,8 @@ multibranch:
             main
             feature-.*
             fix-.*
+
+  markerFile: pom.xml   # 🔥 THIS IS THE KEY LINE
 
   orphanedItemStrategy:
     numToKeep: 10

@@ -12,7 +12,38 @@ parameters:
     displayName: Git Credentials
 
 multibranch:
-  markerFile: pom.xml   # ✅ MUST be here
+  markerFile: pom.xml   # ✅ MUST be heretype: pipeline-template
+version: 1
+
+name: Spring Boot Multibranch Pipeline (Maven Only)
+displayName: Spring Boot Multibranch Pipeline (Maven Only)
+description: Multibranch pipeline with feature and main builds
+templateType: MULTIBRANCH
+
+parameters:
+  - name: gitCredentials
+    type: credentials
+    displayName: Git Credentials
+
+multibranch:
+  scriptPath: Jenkinsfile   # 🔥 THIS WAS MISSING
+
+  branchSource:
+    git:
+      remote: https://github.com/kamalakar22/board_game.git
+      credentialsId: ${gitCredentials}
+      traits:
+        - $class: jenkins.plugins.git.traits.BranchDiscoveryTrait
+
+        - $class: jenkins.scm.impl.trait.WildcardSCMHeadFilterTrait
+          includes: |
+            main
+            feature-.*
+            fix-.*
+            snyk-.*
+
+  orphanedItemStrategy:
+    numToKeep: 10
 
   branchSource:
     git:
